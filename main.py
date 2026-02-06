@@ -43,26 +43,6 @@ if not static_dir.exists():
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
-# Serve frontend SPA
-@app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    # Serve index.html for all non-API routes to support React Router
-    if full_path.startswith("api/") or full_path.startswith("ws/") or full_path.startswith("download/") or full_path.startswith("preview/"):
-        raise HTTPException(status_code=404, detail="Not Found")
-    
-    build_dir = Path("build")
-    if build_dir.exists():
-        # Try to serve the specific file first
-        requested_file = build_dir / full_path
-        if requested_file.exists() and requested_file.is_file():
-            return FileResponse(requested_file)
-    
-    # Fall back to index.html for SPA routing
-    index_path = build_dir / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
-    raise HTTPException(status_code=404, detail="Frontend not built")
-
 # State
 task_registry: Dict[str, Dict[str, Any]] = {}
 pipeline = DrumPipeline(OUTPUT_DIR)
@@ -82,6 +62,9 @@ async def cleanup_loop():
 
 @app.on_event("startup")
 async def startup(): asyncio.create_task(cleanup_loop())
+
+@app.get("/health")
+async def health(): return {"status": "ok"}
 
 @app.post("/upload", response_model=UploadResponse)
 async def upload(file: UploadFile):
@@ -213,10 +196,27 @@ async def get_other_stem(task_id: str, stem: str):
     if not path.exists(): raise HTTPException(404)
     return FileResponse(path, media_type="audio/wav")
 
-@app.get("/health")
-async def health(): return {"status": "ok"}
-
 @app.delete("/task/{task_id}")
 async def delete_task(task_id: str):
     if task_id in task_registry: task_registry.pop(task_id); return {"status": "deleted"}
     raise HTTPException(404)
+
+# Serve frontend SPA - MUST BE LAST
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    # Serve index.html for all non-API routes to support React Router
+    if full_path.startswith("api/") or full_path.startswith("ws/") or full_path.startswith("download/") or full_path.startswith("preview/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    build_dir = Path("build")
+    if build_dir.exists():
+        # Try to serve the specific file first
+        requested_file = build_dir / full_path
+        if requested_file.exists() and requested_file.is_file():
+            return FileResponse(requested_file)
+
+    # Fall back to index.html for SPA routing
+    index_path = build_dir / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
+    raise HTTPException(status_code=404, detail="Frontend not built")
