@@ -1,1 +1,84 @@
-@tailwind base; @tailwind components; @tailwind utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --primary: #00aaff;
+    --accent-green: #39ff14;
+    --bg-dark: #0a0a0a;
+    --panel-dark: #121212;
+    --panel-border: #1a1a1a;
+    --glow-blue: 0 0 15px rgba(0, 170, 255, 0.6);
+  }
+
+  body {
+    @apply bg-[#0a0a0a] text-[#f0f0f0];
+    font-family: 'Space Grotesk', sans-serif;
+    background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .horizontal-lines {
+    background-image: linear-gradient(0deg, transparent 50%, rgba(255,255,255,0.02) 50%);
+    background-size: 100% 4px;
+  }
+
+  .recessed-knob-container {
+    background: linear-gradient(145deg, #050505, #151515);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+  }
+
+  .glossy-knob {
+    background: linear-gradient(135deg, #444 0%, #1a1a1a 45%, #000 50%, #1a1a1a 55%, #333 100%);
+    box-shadow:
+      0 10px 20px rgba(0,0,0,0.8),
+      inset 0 2px 3px rgba(255,255,255,0.1);
+  }
+
+  .illuminated-ring {
+    box-shadow:
+      0 0 0 2px #000,
+      0 0 10px 1px var(--primary);
+  }
+
+  .fader-groove {
+    background: #050505;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.9), inset -1px -1px 1px rgba(255,255,255,0.05);
+  }
+
+  .sleek-fader {
+    background: linear-gradient(180deg, #333 0%, #555 10%, #222 50%, #111 90%, #333 100%);
+    box-shadow:
+      0 4px 10px rgba(0,0,0,0.8),
+      inset 0 1px 1px rgba(255,255,255,0.2);
+  }
+
+  .led-indicator-blue {
+    background: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+  }
+
+  .waveform-glow {
+    filter: drop-shadow(0 0 6px var(--primary));
+  }
+
+  .console-panel-bg {
+    background-color: #0f0f0f;
+    background-image:
+      linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.01) 50%, transparent 100%);
+    border: 1px solid #1a1a1a;
+  }
+}
